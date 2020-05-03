@@ -265,10 +265,9 @@ def get_top_moves(board, blocks, min_score=100, max_nb_moves=10, level=1, score=
         if temp_score >= min_score:
             solutions.append([(pos,) + move])
         else:
-            other_moves = get_top_moves(copy, blocks.copy(), min_score, max_nb_moves-1, temp_level, temp_score)
+            other_moves = get_top_moves(copy, blocks.copy(), min_score, max_nb_moves - 1, temp_level, temp_score)
             if other_moves is not None:
                 solutions.append([(pos,) + move] + other_moves)
-
 
     if len(solutions) == 0:
         return None
@@ -290,9 +289,6 @@ def get_top_moves(board, blocks, min_score=100, max_nb_moves=10, level=1, score=
         solutions = [min]
 
     return solutions[0]
-
-
-
 
 
 def let_player_move_block(board):
@@ -331,7 +327,7 @@ def let_player_move_block(board):
     Board.move_block_horizontally(board, block_to_move, distance_to_move_over)
 
 
-def play_keyboard(blocks = [], nb_rows=10, nb_columns=8):
+def play_keyboard(blocks=[], nb_rows=10, nb_columns=8):
     """
         Function to play the game on a board with the given number of rows and the
         given number of columns via the keyboard, using the given blocks to fill
@@ -350,13 +346,13 @@ def play_keyboard(blocks = [], nb_rows=10, nb_columns=8):
     the_board = Board.make_board((nb_rows, nb_columns))
     while Board.is_empty_row(the_board, "X"):
         if len(blocks) > 0:
-            Board.insert_bottom_row(the_board,blocks.pop(0))
+            Board.insert_bottom_row(the_board, blocks.pop(0))
         else:
             Board.push_all_blocks_up(the_board)
             max_block_length = max(2, \
-                               round(nb_columns / 4) if level <= 3 else \
-                                   round(nb_columns / 3) if level <= 6 else
-                                   round(nb_columns / 2))
+                                   round(nb_columns / 4) if level <= 3 else \
+                                       round(nb_columns / 3) if level <= 6 else
+                                       round(nb_columns / 2))
             Board.fill_bottom_row(the_board, max_block_length)
         level, score = stabilize_board(level, score, the_board)
         Board.print_board(the_board)
@@ -382,9 +378,9 @@ if __name__ == '__main__':
     block4_2 = Block.make_block(3, color=Color.GREEN)
     block4_3 = Block.make_block(1, color=Color.GREEN)
     blocks_to_fill = \
-        [[(("a", 1), block1_1), (("a", 2), block1_2)], #(("a", 5), block1_3)],
+        [[(("a", 1), block1_1), (("a", 2), block1_2)],  # (("a", 5), block1_3)],
          [(("a", 1), block2_1), (("a", 3), block2_2), (("a", 5), block2_3)],
          [(("a", 1), block3_1), (("a", 5), block3_2), (("a", 6), block3_3), (("a", 8), block3_4)],
          [(("a", 1), block4_1), (("a", 5), block4_2), (("a", 8), block4_3)]
          ]
-    play_keyboard(blocks_to_fill,nb_columns=9)
+    play_keyboard(blocks_to_fill, nb_columns=9)

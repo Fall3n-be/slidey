@@ -6,6 +6,7 @@ from collections import defaultdict, OrderedDict
 import random
 import copy
 
+
 def is_proper_board(board):
     """
         Check whether the given board is a proper board.
@@ -97,16 +98,15 @@ def get_leftmost_position_of(board, block):
         - The given board is a proper board.
         - The given block is a proper block for the dimension of the given board.
     """
-    for i in range(1, Dimension.get_nb_of_rows(get_dimension(board))+1):
+    for i in range(1, Dimension.get_nb_of_rows(get_dimension(board)) + 1):
         row_id = Position.id_of_row(get_dimension(board), i)
-        for j in range(1, Dimension.get_nb_of_columns(get_dimension(board))+1):
+        for j in range(1, Dimension.get_nb_of_columns(get_dimension(board)) + 1):
             try:
                 if board[row_id][j] is block:
                     return row_id, j
             except KeyError:
                 pass
     return None
-
 
 
 def get_all_positions_of(board, block):
@@ -143,10 +143,10 @@ def get_random_position_for(board, block, row="a"):
     solutions = ()
     length = Block.get_length(block)
     max_columns = Dimension.get_nb_of_columns(get_dimension(board))
-    for i in range(1, max_columns+1):
+    for i in range(1, max_columns + 1):
         if is_free_at(board, (row, i)):
-            for j in range(1, length+1):
-                if not is_free_at(board, (row, i+j-1)):
+            for j in range(1, length + 1):
+                if not is_free_at(board, (row, i + j - 1)):
                     break
                 if j == length:
                     solutions += ((row, i),)
@@ -154,7 +154,6 @@ def get_random_position_for(board, block, row="a"):
         return random.choice(solutions)
     except IndexError:
         return None
-
 
 
 def get_all_blocks_in_row(board, row):
@@ -190,10 +189,10 @@ def get_length_largest_gap_in_row(board, row):
     max_columns = Dimension.get_nb_of_columns(get_dimension(board))
     if row not in board:
         return Dimension.get_nb_of_columns(get_dimension(board))
-    for i in range(1, max_columns+1):
+    for i in range(1, max_columns + 1):
         block = Block.make_block(i)
         if get_random_position_for(board, block, row) is None:
-            return i-1
+            return i - 1
 
 
 def is_empty_row(board, row):
@@ -237,7 +236,7 @@ def get_all_full_rows(board):
     """
     full_rows = []
     max_rows = Dimension.get_nb_of_rows(get_dimension(board))
-    for i in range(1, max_rows+1):
+    for i in range(1, max_rows + 1):
         row_id = Position.id_of_row(get_dimension(board), i)
         if is_full_row(board, row_id):
             full_rows.append(row_id)
@@ -293,12 +292,11 @@ def can_accept_block_at(board, block, position):
         - The given position is a proper position.
     """
     length = Block.get_length(block)
-    if Block.is_proper_block_for_dimension(block, get_dimension(board)):
-        if not contains_block(board, block):
-            for i in range(length):
-                if not is_free_at(board, (Position.get_row(position), Position.get_column(position)+i)):
-                    return False
-            return True
+    if Block.is_proper_block_for_dimension(block, get_dimension(board)) and not contains_block(board, block):
+        for i in range(length):
+            if not is_free_at(board, (Position.get_row(position), Position.get_column(position) + i)):
+                return False
+        return True
     return False
 
 
@@ -315,7 +313,7 @@ def add_block_at(board, block, position):
         - The given board can accept the given block at the given position.
     """
     for i in range(Block.get_length(block)):
-        board[Position.get_row(position)][Position.get_column(position)+i] = block
+        board[Position.get_row(position)][Position.get_column(position) + i] = block
 
 
 def remove_block_from(board, block):
@@ -331,7 +329,7 @@ def remove_block_from(board, block):
     if contains_block(board, block):
         position = get_leftmost_position_of(board, block)
         for i in range(Block.get_length(block)):
-            del board[Position.get_row(position)][Position.get_column(position)+i]
+            del board[Position.get_row(position)][Position.get_column(position) + i]
 
 
 def is_airborne(board, block):
@@ -378,7 +376,7 @@ def get_adjacent_blocks_above(board, block):
         return blocks
     pos_above = Position.up(get_dimension(board), pos)
     for i in range(Block.get_length(block)):
-        block_above = get_block_at(board, (Position.get_row(pos_above), Position.get_column(pos_above)+i))
+        block_above = get_block_at(board, (Position.get_row(pos_above), Position.get_column(pos_above) + i))
         if block_above is not None and block_above is not cache:
             blocks.append(block_above)
         cache = block_above
@@ -557,12 +555,12 @@ def let_explode(board, block):
         score += Block.get_length(block)
         remove_block_from(board, block)
     elif Block.get_type(block) is Block.FRAGILE:
-        score += 2*Block.get_length(block)
+        score += 2 * Block.get_length(block)
         position = get_leftmost_position_of(board, block)
         remove_block_from(board, block)
         block1, block2 = Block.split_block(block)
         add_block_at(board, block1, position)
-        add_block_at(board, block2, Position.right(get_dimension(board), position, round(Block.get_length(block)/2)))
+        add_block_at(board, block2, Position.right(get_dimension(board), position, round(Block.get_length(block) / 2)))
     else:
         score += Block.get_length(block)
         to_explode = get_adjacent_blocks_below(board, block) + get_adjacent_blocks_above(board, block)
@@ -595,7 +593,7 @@ def push_all_blocks_in_row_up(board, row):
         - The row above the given row is empty.
     """
     dim = get_dimension(board)
-    new_row_id = Position.id_of_row(dim, Position.nb_of_row(dim, row)+1)
+    new_row_id = Position.id_of_row(dim, Position.nb_of_row(dim, row) + 1)
     board[new_row_id] = board[row]
     del board[row]
 
@@ -684,8 +682,6 @@ def can_move_over(board, block, nb_steps):
     return False
 
 
-
-
 def move_block_horizontally(board, block, nb_steps):
     """
         Move the given block on the given board over the given number of steps.
@@ -698,6 +694,7 @@ def move_block_horizontally(board, block, nb_steps):
     position = get_leftmost_position_of(board, block)
     remove_block_from(board, block)
     add_block_at(board, block, Position.right(get_dimension(board), position, nb_steps))
+
 
 def print_board(board):
     """
@@ -744,4 +741,3 @@ def print_board(board):
     for column in range(1, Dimension.get_nb_of_columns(get_dimension(board)) + 1):
         print("\033[1;30;48m" + '{:3d}'.format(column), end=" ")
     print()
-
